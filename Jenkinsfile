@@ -4,8 +4,8 @@ pipeline {
     }
 
     options {
-        timeout(time:30, unit:'MINUTES') // set a timeout of 30 minutes for the entire pipeline
-        disableConcurrentBuilds() // disable concurrent builds, only one build can run at a time
+        timeout(time: 30, unit: 'MINUTES')   // timeout for pipeline
+        disableConcurrentBuilds()            // only one build at a time
     }
 
     environment {
@@ -14,15 +14,25 @@ pipeline {
 
     stages {
 
+        stage('Cleanup Workspace') {
+            steps {
+                echo "Cleaning workspace..."
+                deleteDir()                  // remove old files to avoid conflicts
+            }
+        }
+
         stage('Checkout') {
             steps {
-                checkout scm
+                echo "Checking out source code..."
+                retry(3) {                   // retry checkout in case of transient errors
+                    checkout scm
+                }
             }
         }
         
-        stage('Read package.json') { // stage to read package.json file
+        stage('Read package.json') {
             steps {
-                script { // using script block to run a Groovy script
+                script {
                     echo 'Reading package.json...'
                     def packageJson = readJSON file: 'package.json'
                     appVersion = packageJson.version
@@ -31,17 +41,19 @@ pipeline {
             }
         }
 
-         stage('install dependencies') { // stage to install dependencies
+        stage('Install dependencies') {
             steps {
-                script { // using script block to run a Groovy script
-                   sh """
-                     npm install
-
-                   """ // using sudo to run npm install command
-                    echo 'Dependencies installed successfully.'
-                }
+                echo "Installing dependencies..."
+                sh "npm install"             // no sudo (install locally in workspace)
+                echo 'Dependencies installed successfully.'
             }
         }
     }
 
+    post {
+        always {
+            echo "Cleaning up after build..."
+            deleteDir()                      // clean workspace at the end
+        }
+    }
 }
