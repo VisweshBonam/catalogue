@@ -19,7 +19,7 @@ pipeline {
                 deleteDir()   // <--- deletes everything in workspace
             }
         }
-        
+
         stage('Read package.json') { // stage to read package.json file
             steps {
                 script { // using script block to run a Groovy script
@@ -35,7 +35,8 @@ pipeline {
             steps {
                 script { // using script block to run a Groovy script
                    sh """
-                   sudo npm install
+                     npm install
+                     
                    """ // using sudo to run npm install command
                     echo 'Dependencies installed successfully.'
                 }
