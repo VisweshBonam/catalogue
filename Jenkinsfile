@@ -12,7 +12,14 @@ pipeline {
         appVersion = ''
     }
 
-    stages{
+    stages {
+         stage('Cleanup') {
+            steps {
+                echo "Cleaning workspace..."
+                deleteDir()   // <--- deletes everything in workspace
+            }
+        }
+        
         stage('Read package.json') { // stage to read package.json file
             steps {
                 script { // using script block to run a Groovy script
