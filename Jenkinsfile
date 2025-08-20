@@ -27,7 +27,9 @@ pipeline {
          stage('install dependencies') { // stage to install dependencies
             steps {
                 script { // using script block to run a Groovy script
-                   sh "npm install" // using sudo to run npm install command
+                   sh """
+                   npm install
+                   """ // using sudo to run npm install command
                     echo 'Dependencies installed successfully.'
                 }
             }
