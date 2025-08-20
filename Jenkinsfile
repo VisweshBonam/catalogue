@@ -13,13 +13,24 @@ pipeline {
     }
 
     stages{
-        stage('Read package.json'){ // stage to read package.json file
+        stage('Read package.json') { // stage to read package.json file
             steps {
                 script { // using script block to run a Groovy script
                     echo 'Reading package.json...'
                     def packageJson = readJSON file: 'package.json'
                     appVersion = packageJson.version
                     echo "Application Version: ${appVersion}"
+                }
+            }
+        }
+    }
+
+     stages{
+        stage('install dependencies') { // stage to install dependencies
+            steps {
+                script { // using script block to run a Groovy script
+                   sudo npm install // using sudo to run npm install command
+                    echo 'Dependencies installed successfully.'
                 }
             }
         }
