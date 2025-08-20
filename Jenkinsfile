@@ -13,6 +13,12 @@ pipeline {
     }
 
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         
         stage('Read package.json') { // stage to read package.json file
             steps {
